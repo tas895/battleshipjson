@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- https://tas895.github.io/wordle/wordle -->
+<!-- https://tas895.github.io/battleshipjson/battleship -->
 <html>
 <head>
 <meta charset="UTF-8">
@@ -90,22 +90,26 @@
                 data.ships.forEach(ship => {
                     let{ coords, size, orientation } = ship; //Extract ship properties (starting cooridnates, size, and direction)
                     //Convert 1-based index to 0-based index - couldn't get the ships to show up properly without this
-                    let row = coords[0] - 1;
-                    let col = coords[1] - 1;
-                    
+                    let row = coords[0] - 1;    //Converts row to 0-based
+                    let col = coords[1] - 1;    //Converts column to 0-based
                     let shipSquares = []; //Creates an array to store the positions of the ships
+                    //Adjusts if ship would go out of bounds
+                    if(orientation === "vertical" && row + size > NUM_ROWS) {   //Moves ship up so it fits
+                        row = NUM_ROWS - size;
+                    }
+                    if(orientation === "horizontal" && col + size > NUM_COLS) { //Moves ship left so it fits
+                        col = NUM_COLS - size;
+                    }
                     for(let i = 0; i < size; i++) {
                         let newRow = orientation === "vertical" ? row + i : row;    //If vertical, move down
                         let newCol = orientation === "horizontal" ? col + i : col;  //If horizontal, move right
-                        //Ensure the ship is within the board boundaries (makes sure ships don't end up outside the board etc.)
-                        if(newRow < NUM_ROWS && newCol < NUM_COLS) {
-                            let key = `${newRow},${newCol}`; //Create a coordinate key
-                            shipCoords.add(key); //Adds this coordinate to the set of ship locations
-                            shipSquares.push(key); //Add this coordinate to the ship's own list
-                        }
+                        
+                        let key = `${newRow},${newCol}`; //Converts position of ship to a string
+                        shipCoords.add(key); //Adds this coordinate to the set of ship locations
+                        shipSquares.push(key); //Add this coordinate to the ship's own list of squares
                     }
                     //Store the ship in the ships array
-                    ships.push({ name: ship.name, squares: shipSquares, hits: 0, sunk: false });    //Tracks othe ship's name, its occupied squares, and whether it has been hit or sunk
+                    ships.push({ name: ship.name, squares: shipSquares, hits: 0, sunk: false });    //Tracks other ship's name, its occupied squares, and whether it has been hit or sunk
                 });
                 console.log("Ship positions loaded:", ships); //Debugging - use this to show if the JSON loaded correctly in the console
             })
