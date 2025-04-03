@@ -58,7 +58,7 @@
     <div class ="board" id="board"></div>
     <script>
         const board = document.getElementById("board");
-        const guessesDisplay = document.getElementById("guesses");
+        const showGuesses = document.getElementById("guesses");
 
         const NUM_ROWS = 6; //6 rows
         const NUM_COLS = 6; //6 columns
@@ -76,7 +76,7 @@
                 square.dataset.row = row; //Puts row number inside the square so we know which row it belongs to
                 square.dataset.col = col; //Puts column number inside square so we know which column it belongs to
                 //Add an event listener for when the square is clicked
-                square.addEventListener("click", () => handleSquareClick(row, col, square));    //Makes square "clickable"
+                square.addEventListener("click", () => placeShips(row, col, square));    //Makes square "clickable"
                 board.appendChild(square); //Add the square to the game board
             }
         }
@@ -115,7 +115,7 @@
             .catch(error => console.log("Error fetching JSON:", error)); //Handle errors - again used to test to make sure JSON loaded correctly
 
        //Handle when a player clicks on a square
-       function handleSquareClick(row, col, square) {   //Handle when a player clicks on a square
+       function placeShips(row, col, square) {   //Handle when a player clicks on a square
             if(remainingGuesses <= 0 || gameOver) return; //Stop if game is over or no guesses left
             let key = `${row},${col}`;  //Creates a unique key for each square
             if(hitSquares.has(key)) return; //Ignore clicks on already guessed squares - avoiding multiple clicks on the same square
@@ -150,7 +150,7 @@
             }
             
             //Update guess display with current game status and remaining guesses
-            guessesDisplay.textContent = `Guesses Remaining: ${remainingGuesses} - ${message}`;
+            showGuesses.textContent = `Guesses Remaining: ${remainingGuesses} - ${message}`;
             
             if(remainingGuesses === 0) { //End game if no more guesses
                 endGame();
@@ -160,7 +160,7 @@
         //Function to handle game-over/ending the game
         function endGame() {
             gameOver = true; //Ends game so that no more guesses can occur (unless you refresh the page of course)
-            guessesDisplay.textContent += " - Game Over! Revealing all ships...";   //Updates the message letting the player know the game is over/answer revealed
+            showGuesses.textContent += " - Game Over! Revealing all ships...";   //Updates the message letting the player know the game is over/answer revealed
             
             //Reveal all ship locations
             ships.forEach(ship => { //Loops through each ship in the ships array to reveal locations/answer
